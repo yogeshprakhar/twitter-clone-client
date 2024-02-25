@@ -1,6 +1,7 @@
 import { graphql } from "../../gql";
 
-export const verifyuserGoogleTokenQuery = graphql(`#graphql
+export const verifyuserGoogleTokenQuery = graphql(`
+  #graphql
   query VerifyUserGoogletoken($token: String!) {
     verifyGoogleToken(token: $token)
   }
@@ -14,6 +15,38 @@ export const getCurrentUserQuery = graphql(`
       email
       lastName
       profileImageURL
+      tweets {
+        id
+        content
+        author {
+          id
+          firstName
+          lastName
+          profileImageURL
+        }
+      }
+    }
+  }
+`);
+
+export const getUserByIdQuery = graphql(`
+  #graphql
+  query GetUserById($id: ID!) {
+    getUserById(id: $id) {
+      id
+      firstName
+      lastName
+      profileImageURL
+      tweets {
+        content
+        id
+        author {
+          id
+          firstName
+          lastName
+          profileImageURL
+        }
+      }
     }
   }
 `);
