@@ -49,6 +49,7 @@ export const getUserByIdQuery = graphql(`
       firstName
       lastName
       profileImageURL
+      
       followers {
         id
         firstName

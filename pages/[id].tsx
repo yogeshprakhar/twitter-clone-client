@@ -11,6 +11,9 @@ import { graphqlClient } from "@/clients/api";
 import { getUserByIdQuery } from "@/graphql/query/user";
 import { userInfo } from "os";
 import { useCallback, useMemo } from "react";
+import { PiEyedropper } from "react-icons/pi";
+import { followUserMutation, unfollowUserMutation } from "@/graphql/mutation/user";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ServerProps {
   userInfo?: User;
@@ -20,6 +23,7 @@ const UserProfilePage: NextPage<ServerProps> = (props) => {
   // const { user } = useCurrentUser();
   const router = useRouter();
   const { user: currentUser } = useCurrentUser();
+  const queryClient = useQueryClient();
 
   const amIFollowing = useMemo(() => {
     if (!props.userInfo) return false;
@@ -30,8 +34,21 @@ const UserProfilePage: NextPage<ServerProps> = (props) => {
     );
   }, [currentUser?.following, props.userInfo]);
 
-  const handleFollowUser = useCallback(() => {}, [])
+  const handleFollowUser = useCallback(async () => {
+    if (!props.userInfo?.id) return;
 
+    await graphqlClient.request(followUserMutation, { to: props.userInfo?.id });
+    await queryClient.invalidateQueries({ queryKey: ["current-user"] });
+  }, []);
+
+  const handleUnfollowUser = useCallback(async () => {
+    if (!props.userInfo?.id) return;
+
+    await graphqlClient.request(unfollowUserMutation, {
+      to: props.userInfo?.id,
+    });
+    await queryClient.invalidateQueries({ queryKey: ["current-user"] });
+  }, []);
   // console.log("user is",user)
   // console.log("this is props",props)
   // console.log("Router Query is ",router.query)
@@ -72,11 +89,17 @@ const UserProfilePage: NextPage<ServerProps> = (props) => {
               {currentUser?.id !== props.userInfo?.id && (
                 <>
                   {amIFollowing ? (
-                    <button className="bg-white text-black px-2 py-1 rounded-full text-sm">
+                    <button
+                      onClick={handleUnfollowUser}
+                      className="bg-white text-black px-2 py-1 rounded-full text-sm"
+                    >
                       UnFollow
                     </button>
                   ) : (
-                    <button onClick={handleFollowUser} className="bg-white text-black px-2 py-1 rounded-full text-sm">
+                    <button
+                      onClick={handleFollowUser}
+                      className="bg-white text-black px-2 py-1 rounded-full text-sm"
+                    >
                       Follow
                     </button>
                   )}

@@ -6,8 +6,7 @@ export const followUserMutation = graphql(`#graphql
     }
 `)
 
-export const unfollowUserMutation = graphql(`
-  #graphql
+export const unfollowUserMutation = graphql(`#graphql
   mutation UnfollowUser($to: ID!) {
     unfollowUser(to: $to)
   }
