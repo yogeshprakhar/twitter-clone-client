@@ -103,9 +103,7 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
             <div className="mt-4 text-2xl pr-4">
               <ul>
                 {sideBarMenuItems.map((item) => (
-                  <li
-                    key={item.title}
-                  >
+                  <li key={item.title}>
                     <Link
                       className="mt-2 flex justify-start items-center gap-4 hover:bg-gray-600 rounded-full px-5 py-2 cursor-pointer transition-all w-fit"
                       href={item.link}
@@ -155,13 +153,36 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props) => {
         <div className="col-span-10 sm:col-span-5 border-l-[1px] border-r-[1px] border-white overflow-scroll no-scrollbar">
           {props.children}
         </div>
-        <div className="hidden sm:block col-span-3 p-5">
-          {!user && (
+        <div className="col-span-3 p-5">
+          {!user ? (
             <div className="p-5 bg-slate-700 rounded-lg">
               <div className="flex flex-col justify-center items-center">
                 <h1 className="my-2 text-2xl">New to Twitter?</h1>
                 <GoogleLogin onSuccess={handleLoginWithGoogle} />
               </div>
+            </div>
+          ) : (
+            <div className="px-4 py-3 bg-slate-800 rounded-lg">
+              <h1 className="my-2 text-2xl mb-5">User you may know</h1>
+              {user?.recommendedUsers?.map((el) => (
+                <div className="flex items-center gap-3 mt-2" key={el?.id}>
+                  {el?.profileImageURL && (
+                    <Image
+                      className="rounded-full"
+                      src={el?.profileImageURL}
+                      alt="user-image"
+                      width={60}
+                      height={60}
+                    />
+                  )}
+                  <div className="flex gap-5">
+                    <div className="text-lg font-semibold">
+                      {el?.firstName} {el?.lastName}
+                    </div>
+                    <Link href={`/${el?.id}`} className="bg-white text-black rounded full text-sm px-5 py-1 text-bold hover:bg-slate-400">View</Link>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
